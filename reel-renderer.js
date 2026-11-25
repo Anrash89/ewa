@@ -29,10 +29,32 @@ lines(ctx,title,84,515,900,110,3,p.ink,1.03);const time=scene.time||0;orbit(ctx,
 }else if(phase==='spin'){
 text(ctx,'СЛЕДУЮЩИЙ ПОБЕДИТЕЛЬ',84,475,26,500,p.muted);text(ctx,String(idx+1).padStart(2,'0'),996,558,115,550,p.accent,'right');const progress=clamp(scene.progress||0);orbit(ctx,p,1+ease(progress)*18);nameReel(ctx,p,config,scene);text(ctx,progress>.84?'ЕЩЁ МГНОВЕНИЕ…':'ПУСТЬ РЕШИТ СЛУЧАЙ.',540,1470,26,500,p.muted,'center');for(let i=0;i<3;i++){ctx.globalAlpha=.2+Math.max(0,Math.sin((scene.time||0)*5-i))*.8;circle(ctx,510+i*30,1545,5,p.accent)}ctx.globalAlpha=1;
  }else if(phase==='winner'&&win){
-const progress=scene.progress===undefined?1:clamp(scene.progress),intro=ease(progress),lift=(1-intro)*52;confetti(ctx,p,clamp((scene.time||0)/1.5));text(ctx,`ПОБЕДИТЕЛЬ ${String(idx+1).padStart(2,'0')} / ${String(config.target||config.winners.length).padStart(2,'0')}`,84,467,26,500,p.muted);text(ctx,String(idx+1).padStart(2,'0'),996,555,86,550,p.accent,'right');ctx.save();ctx.globalAlpha=intro;ctx.translate(0,lift);circle(ctx,540,648,66,p.accent);text(ctx,(win.displayName||win.user).slice(0,1).toUpperCase(),540,670,61,550,p.bg,'center');const label=win.displayName||'@'+win.user,fs=fit(ctx,label,912,84,34);text(ctx,label,540,805,fs,550,p.ink,'center');if(win.displayName){const nick='@'+win.user;text(ctx,nick,540,873,fit(ctx,nick,870,46,30),500,p.accent,'center')}else text(ctx,'АВТОР ПОБЕДИВШЕГО КОММЕНТАРИЯ',540,868,22,450,p.muted,'center');ctx.fillStyle=p.tint;ctx.beginPath();ctx.roundRect(84,950,912,500,26);ctx.fill();text(ctx,'КОММЕНТАРИЙ ПОБЕДИТЕЛЯ',126,1014,23,500,p.muted);ctx.save();ctx.globalAlpha=.3;text(ctx,'“',118,1148,150,550,p.accent);ctx.restore();ctx.font='400 38px "Golos Text", sans-serif';const original=win.text||'Комментарий не указан',comment=wrap(ctx,original,756,5);comment.forEach((line,i)=>{ctx.fillStyle=p.ink;ctx.textAlign='left';ctx.font='400 38px "Golos Text", sans-serif';ctx.fillText(line,151,1124+i*54)});if(comment.join(' ').length<original.length)text(ctx,'ПОЛНЫЙ ТЕКСТ СОХРАНЁН В EXCEL',126,1412,20,450,p.muted);text(ctx,'ПОЗДРАВЛЯЕМ С ПОБЕДОЙ!',540,1564,26,550,p.ink,'center');ctx.restore();
+const progress=scene.progress===undefined?1:clamp(scene.progress),intro=ease(progress),lift=(1-intro)*32;
+confetti(ctx,p,clamp((scene.time||0)/1.5));
+text(ctx,`ПОБЕДИТЕЛЬ ${String(idx+1).padStart(2,'0')} / ${String(config.target||config.winners.length).padStart(2,'0')}`,84,458,30,450,p.muted);
+text(ctx,String(idx+1).padStart(2,'0'),996,510,96,500,p.accent,'right');
+ctx.save();ctx.globalAlpha=intro;ctx.translate(0,lift);
+circle(ctx,540,642,78,p.accent);
+text(ctx,(win.displayName||win.user).slice(0,1).toUpperCase(),540,667,72,500,p.bg,'center');
+const label=win.displayName||'@'+win.user,fs=fit(ctx,label,900,92,38);
+text(ctx,label,540,828,fs,500,p.ink,'center');
+if(win.displayName){const nick='@'+win.user;text(ctx,nick,540,898,fit(ctx,nick,880,48,32),450,p.accent,'center');}
+const cardTop=win.displayName?968:926,original=win.text||'Комментарий не указан';
+const commentSize=original.length<65?54:44,lineHeight=commentSize*1.35;
+ctx.font=`400 ${commentSize}px "Golos Text", sans-serif`;
+const comment=wrap(ctx,original,800,5),truncated=comment.join(' ').length<original.replace(/\s+/g,' ').trim().length;
+const cardHeight=184+comment.length*lineHeight+(truncated?42:0),cardBottom=cardTop+cardHeight;
+ctx.fillStyle=p.tint;ctx.beginPath();ctx.roundRect(84,cardTop,912,cardHeight,32);ctx.fill();
+text(ctx,'КОММЕНТАРИЙ ПОБЕДИТЕЛЯ',134,cardTop+62,27,450,p.muted);
+comment.forEach((line,i)=>{ctx.fillStyle=p.ink;ctx.textAlign='left';ctx.font=`400 ${commentSize}px "Golos Text", sans-serif`;ctx.fillText(line,134,cardTop+146+i*lineHeight);});
+if(truncated)text(ctx,'ПОЛНЫЙ ТЕКСТ СОХРАНЁН В EXCEL',134,cardBottom-36,23,450,p.muted);
+const cheersY=Math.max(1330,cardBottom+108),cheersSize=cardBottom>1350?58:76;
+text(ctx,'Поздравляем',540,cheersY,cheersSize,500,p.ink,'center');
+text(ctx,'с победой!',540,cheersY+cheersSize*1.08,cheersSize,500,p.accent,'center');
+ctx.restore();
 }else if(phase==='outro'){
 text(ctx,'Поздравляем',84,490,93,550,p.ink);text(ctx,'победителей.',84,592,93,550,p.accent);const offset=(scene.page||0)*10,entries=(config.winners||[]).slice(offset,offset+10);for(let i=0;i<entries.length;i++){const amount=scene.animate?ease(((scene.time||0)-i*.08)/.38):1,y=730+i*74+(1-amount)*26;ctx.save();ctx.globalAlpha=amount;text(ctx,String(offset+i+1).padStart(2,'0'),84,y,27,450,p.muted);const entry=entries[i],name='@'+entry.user;if(entry.displayName){text(ctx,entry.displayName,172,y-5,fit(ctx,entry.displayName,820,29,21),550,p.ink);text(ctx,name,172,y+24,fit(ctx,name,820,23,18),450,p.muted)}else text(ctx,name,172,y,fit(ctx,name,820,39,22),550,p.ink);ctx.restore()}rule(ctx,1538,p);text(ctx,'СПАСИБО ВСЕМ, КТО УЧАСТВОВАЛ',84,1598,24,450,p.muted);}
-text(ctx,config.demo?'ДЕМО — НЕ НАСТОЯЩИЙ РОЗЫГРЫШ':'СЛУЧАЙНЫЙ ВЫБОР · БЕЗ ПОВТОРНЫХ ПОБЕД',84,1707,21,450,p.muted);text(ctx,'10',996,1748,38,600,p.accent,'right');ctx.restore();}
+if(config.demo)text(ctx,'ДЕМО — НЕ НАСТОЯЩИЙ РОЗЫГРЫШ',84,1707,24,450,p.muted);ctx.restore();}
 function duration(config,pace=3){return 2+(config.winners?.length||0)*pace+Math.max(1,Math.ceil((config.winners?.length||0)/10))*4}
 function spinProgress(elapsed,duration){return clamp(elapsed/(duration-Math.min(.4,duration*.3)))}
 function sceneAt(t,config,pace=3){if(t<2)return{phase:'intro',time:t};t-=2;const count=config.winners?.length||0,spin=Math.min(1.8,pace*.4);if(t<count*pace){const index=Math.floor(t/pace),local=t%pace;return local<spin?{phase:'spin',index,time:local,progress:spinProgress(local,spin),finalUser:config.winners[index].user}:{phase:'winner',index,time:local-spin,progress:clamp((local-spin)/.45)}}const page=Math.min(Math.max(0,Math.ceil(count/10)-1),Math.floor((t-count*pace)/4));return{phase:'outro',page,time:t-count*pace-page*4,animate:true}}
